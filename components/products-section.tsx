@@ -1,33 +1,34 @@
-import Image from "next/image"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
+import Image from "next/image";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 
 const products = [
   {
-    name: "Raw Wildflower Honey",
+    name: "Med I Proizvodi od Meda",
     description:
-      "Unfiltered, unpasteurized honey harvested from our wildflower meadows. Rich, complex flavor with every spoonful.",
-    price: "$14",
-    image: "/images/product-honey.jpg",
-    tag: "Best Seller",
-  },
-  {
-    name: "Beeswax Candles & Wraps",
-    description:
-      "Hand-poured beeswax candles and reusable food wraps made from 100% pure beeswax from our hives.",
-    price: "$10",
-    image: "/images/product-beeswax.jpg",
-    tag: "Handmade",
-  },
-  {
-    name: "Cut Comb Honey",
-    description:
-      "Honeycomb cut straight from the frame. The most natural way to enjoy honey, wax and all.",
-    price: "$18",
+      "Čist, nefiltriran med sa naših livada. Bogat ukus i prirodna svojstva u svakoj kašičici.",
     image: "/images/product-comb.jpg",
-    tag: "Seasonal",
+    tag: "Najprodavaniji",
+    href: "/proizvodi/med",
   },
-]
+  {
+    name: "Polen, Matična Mliječ i Propolis",
+    description:
+      "Pčelinji proizvodi bogati vitaminima i mineralima. Prirodni dodaci za zdravlje i imunitet.",
+    image: "/images/SlikaPolenaUTegli.jpg",
+    tag: "Prirodno",
+    href: "/proizvodi/polen",
+  },
+  {
+    name: "Matice, Rojevi i Pčelinja Društva",
+    description:
+      "Kvalitetne selekcionirane matice i pčelinja društva za pčelare koji žele unaprijediti svoj pčelinjak.",
+    image: "/images/SlikaOplodnjaka.jpg",
+    tag: "Sezonski",
+    href: "/proizvodi/matice",
+  },
+];
 
 export function ProductsSection() {
   return (
@@ -35,14 +36,15 @@ export function ProductsSection() {
       <div className="mx-auto max-w-7xl px-6">
         <div className="text-center">
           <p className="mb-2 text-sm font-medium uppercase tracking-widest text-primary">
-            Our Products
+            Naši Proizvodi
           </p>
           <h2 className="font-serif text-4xl font-bold text-foreground md:text-5xl text-balance">
-            From Our Hives to Your Table
+            Prirodni Med i Pčelinji Proizvodi
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-muted-foreground leading-relaxed">
-            Everything we sell is produced on our farm with care for the bees and
-            respect for the craft. Small batch, always fresh.
+            Domaći med, polen, propolis, matična mliječ i pčelinje matice — sve
+            proizvedeno na našem pčelinjaku. Bez aditiva, bez prerade, samo
+            čista priroda.
           </p>
         </div>
 
@@ -50,7 +52,7 @@ export function ProductsSection() {
           {products.map((product) => (
             <Card
               key={product.name}
-              className="group overflow-hidden border-border bg-card transition-shadow hover:shadow-lg"
+              className="group flex flex-col overflow-hidden border-border bg-card transition-shadow hover:shadow-lg"
             >
               <div className="relative aspect-[4/3] overflow-hidden">
                 <Image
@@ -63,20 +65,20 @@ export function ProductsSection() {
                   {product.tag}
                 </span>
               </div>
-              <CardContent className="p-6">
+              <CardContent className="flex flex-1 flex-col p-6">
                 <div className="flex items-start justify-between gap-4">
                   <h3 className="font-serif text-xl font-bold text-card-foreground">
                     {product.name}
                   </h3>
-                  <span className="shrink-0 font-serif text-2xl font-bold text-primary">
-                    {product.price}
-                  </span>
                 </div>
-                <p className="mt-3 text-sm text-muted-foreground leading-relaxed">
+                <p className="mt-3 flex-1 text-sm text-muted-foreground leading-relaxed">
                   {product.description}
                 </p>
-                <Button className="mt-6 w-full bg-primary text-primary-foreground hover:bg-primary/90">
-                  Add to Cart
+                <Button
+                  className="mt-6 w-full bg-primary text-primary-foreground hover:bg-primary/90"
+                  asChild
+                >
+                  <Link href={product.href}>Pogledaj Proizvod</Link>
                 </Button>
               </CardContent>
             </Card>
@@ -84,5 +86,5 @@ export function ProductsSection() {
         </div>
       </div>
     </section>
-  )
+  );
 }

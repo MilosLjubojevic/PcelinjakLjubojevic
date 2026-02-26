@@ -12,14 +12,15 @@ export function ContactSection() {
       <div className="mx-auto max-w-7xl px-6">
         <div className="text-center">
           <p className="mb-2 text-sm font-medium uppercase tracking-widest text-primary">
-            Contact
+            Kontakt
           </p>
           <h2 className="font-serif text-4xl font-bold text-foreground md:text-5xl text-balance">
-            {"Let's Connect"}
+            {"Naručite Med ili Nas Kontaktirajte"}
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-muted-foreground leading-relaxed">
-            Have a question about our honey, interested in wholesale, or want to
-            schedule a visit to the apiary? We would love to hear from you.
+            Želite naručiti domaći med, polen ili druge pčelinje proizvode?
+            Zainteresovani ste za otkup matica ili imate pitanje o pčelarstvu?
+            Javite nam se — rado ćemo pomoći.
           </p>
         </div>
 
@@ -31,25 +32,25 @@ export function ContactSection() {
             >
               <div className="grid gap-6 md:grid-cols-2">
                 <div className="space-y-2">
-                  <Label htmlFor="first-name">First Name</Label>
+                  <Label htmlFor="first-name">Ime</Label>
                   <Input
                     id="first-name"
-                    placeholder="Jane"
+                    placeholder="Marko"
                     className="bg-card border-border"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="last-name">Last Name</Label>
+                  <Label htmlFor="last-name">Prezime</Label>
                   <Input
                     id="last-name"
-                    placeholder="Doe"
+                    placeholder="Petrović"
                     className="bg-card border-border"
                   />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email">E-mail</Label>
                 <Input
                   id="email"
                   type="email"
@@ -59,10 +60,10 @@ export function ContactSection() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="message">Message</Label>
+                <Label htmlFor="message">Poruka</Label>
                 <Textarea
                   id="message"
-                  placeholder="Tell us how we can help..."
+                  placeholder="Napišite nam šta vas zanima — narudžba, pitanje, saradnja..."
                   rows={5}
                   className="bg-card border-border resize-none"
                 />
@@ -73,7 +74,7 @@ export function ContactSection() {
                 size="lg"
                 className="w-full bg-primary text-primary-foreground hover:bg-primary/90 md:w-auto"
               >
-                Send Message
+                Pošalji Poruku
               </Button>
             </form>
           </div>
@@ -81,29 +82,29 @@ export function ContactSection() {
           <div className="space-y-8 md:col-span-2">
             <ContactInfo
               icon={<MapPin className="h-5 w-5" />}
-              title="Visit Us"
+              title="Posjetite Nas"
               lines={["1234 Meadow Lane", "Cloverdale, CA 95425"]}
             />
             <ContactInfo
               icon={<Phone className="h-5 w-5" />}
-              title="Call Us"
+              title="Pozovite Nas"
               lines={["(707) 555-0192"]}
             />
             <ContactInfo
               icon={<Mail className="h-5 w-5" />}
-              title="Email Us"
+              title="Pišite Nam"
               lines={["hello@goldenhiveapiary.com"]}
             />
 
             <div className="rounded-lg border border-border bg-card p-6">
               <h4 className="font-serif text-lg font-bold text-card-foreground">
-                Visiting Hours
+                Radno Vrijeme
               </h4>
               <div className="mt-3 space-y-1.5 text-sm text-muted-foreground">
-                <p>Saturday & Sunday: 10am - 4pm</p>
-                <p>Weekdays: By appointment only</p>
+                <p>Subota i nedjelja: 10:00 - 16:00</p>
+                <p>Radnim danima: Samo po dogovoru</p>
                 <p className="pt-2 text-xs italic">
-                  Please call ahead for group tours
+                  Molimo pozovite unaprijed za grupne posjete
                 </p>
               </div>
             </div>

@@ -1,4 +1,4 @@
-import Image from "next/image"
+import Image from "next/image";
 
 export function AboutSection() {
   return (
@@ -7,51 +7,51 @@ export function AboutSection() {
         <div className="grid items-center gap-12 md:grid-cols-2 lg:gap-20">
           <div className="relative aspect-[4/5] overflow-hidden rounded-lg">
             <Image
-              src="/images/about-beekeeper.jpg"
-              alt="Beekeeper holding a frame of honeybees in the apiary"
+              src="/images/pcelinjak/SlikaRojaNaGrani.jpg"
+              alt="Roj pčela na grani — Pčelinjak Ljubojević"
               fill
-              className="object-cover"
+              className="object-cover brightness-105 contrast-105 saturate-110 blur-[0.5px]"
             />
+            <div className="pointer-events-none absolute inset-0 bg-linear-to-t from-black/20 via-transparent to-black/10" />
           </div>
 
           <div>
             <p className="mb-2 text-sm font-medium uppercase tracking-widest text-primary">
-              About Us
+              O Nama
             </p>
             <h2 className="font-serif text-4xl font-bold leading-tight text-foreground md:text-5xl text-balance">
-              Dedicated to the Craft of Beekeeping
+              45 Godina Posvećeni Pčelarstvu
             </h2>
             <div className="mt-6 space-y-4 text-muted-foreground leading-relaxed">
               <p>
-                Golden Hive Apiary started with two backyard hives and a deep
-                curiosity about the world of honeybees. What began as a hobby
-                quickly grew into a passion for sustainable agriculture and
-                pollinator health.
+                Pčelinjak Ljubojević je porodična priča koja traje već 45
+                godina. Započeli smo sa svega nekoliko košnica, a ljubav prema
+                pčelama i prirodi pretvorila je skroman početak u jedno od
+                pouzdanijih pčelarskih domaćinstava u regionu.
               </p>
               <p>
-                Today, we manage over 40 colonies across three bee yards,
-                producing raw wildflower honey, creamed honey, and beeswax
-                products. Every decision we make puts the health of our bees
-                first.
+                Danas brinemo o preko 200 pčelinjih društava raspoređenih na dva
+                pčelinjaka. Proizvodimo med, kremasti med, polen, propolis,
+                matičnu mliječ i pčelinji vosak — sve bez hemijskih dodataka,
+                onako kako priroda nalaže.
               </p>
               <p>
-                We believe in transparency and community. Whether you are a
-                fellow beekeeper looking for mentorship or a honey lover
-                searching for something truly local, our hive door is always
-                open.
+                Bilo da tražite kvalitetan domaći med za svoju porodicu,
+                pčelinje proizvode za zdravlje ili selekcionirane matice za vaš
+                pčelinjak — kod nas ćete naći provjerenu robu i iskren savjet.
               </p>
             </div>
 
             <div className="mt-10 grid grid-cols-3 gap-6">
-              <Stat value="40+" label="Colonies" />
-              <Stat value="12" label="Years" />
-              <Stat value="3" label="Bee Yards" />
+              <Stat value="200+" label="Pčelinjih Društava" />
+              <Stat value="45" label="Godina Iskustva" />
+              <Stat value="2" label="Pčelinjaka" />
             </div>
           </div>
         </div>
       </div>
     </section>
-  )
+  );
 }
 
 function Stat({ value, label }: { value: string; label: string }) {
@@ -60,5 +60,5 @@ function Stat({ value, label }: { value: string; label: string }) {
       <p className="font-serif text-3xl font-bold text-primary">{value}</p>
       <p className="mt-1 text-sm text-muted-foreground">{label}</p>
     </div>
-  )
+  );
 }

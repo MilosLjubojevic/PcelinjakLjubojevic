@@ -1,12 +1,12 @@
-import Image from "next/image"
-import { Button } from "@/components/ui/button"
+import Image from "next/image";
+import { Button } from "@/components/ui/button";
 
 export function HeroSection() {
   return (
     <section className="relative min-h-[90vh] flex items-end overflow-hidden">
       <Image
-        src="/images/hero-bees.jpg"
-        alt="Beekeeper tending to hives in a golden meadow"
+        src="/images/HeaderBeeyard.png"
+        alt="Pčelinjak Ljubojević — košnice na livadi okružene prirodom"
         fill
         className="object-cover"
         priority
@@ -15,26 +15,35 @@ export function HeroSection() {
 
       <div className="relative z-10 mx-auto w-full max-w-7xl px-6 pb-20 pt-40">
         <p className="mb-3 text-sm font-medium uppercase tracking-widest text-accent">
-          Sustainable Beekeeping Since 2012
+          Porodični pčelinjak sa 45 godina tradicije
         </p>
         <h1 className="max-w-3xl font-serif text-5xl font-bold leading-tight text-primary-foreground md:text-7xl">
-          Pure Honey,{" "}
-          <span className="text-accent">Straight from the Hive</span>
+          Domaći Med i Pčelinji Proizvodi{" "}
+          <span className="text-accent">Pravo iz Naših Košnica</span>
         </h1>
         <p className="mt-6 max-w-xl text-lg leading-relaxed text-primary-foreground/80">
-          We nurture healthy bee colonies and harvest small-batch, raw honey
-          right here in the heart of the countryside. Every jar tells the story
-          of our meadows.
+          Prirodni livadski med, polen, propolis i matična mliječ sa porodičnog
+          pčelinjaka. Preko 200 pčelinjih društava njegujemo s ljubavlju —
+          svaka tegla nosi kvalitet provjerene tradicije.
         </p>
         <div className="mt-8 flex flex-wrap gap-4">
-          <Button size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90" asChild>
-            <a href="#products">Shop Our Honey</a>
+          <Button
+            size="lg"
+            className="bg-primary text-primary-foreground hover:bg-primary/90"
+            asChild
+          >
+            <a href="#products">Pogledaj Ponudu</a>
           </Button>
-          <Button size="lg" variant="outline" className="border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10" asChild>
-            <a href="#about">Our Story</a>
+          <Button
+            size="lg"
+            variant="outline"
+            className="border-primary-foreground text-primary-foreground bg-primary-foreground/15 hover:bg-primary-foreground/25 backdrop-blur-sm"
+            asChild
+          >
+            <a href="#about">Naša Priča</a>
           </Button>
         </div>
       </div>
     </section>
-  )
+  );
 }
