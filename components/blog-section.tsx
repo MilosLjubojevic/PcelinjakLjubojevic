@@ -2,6 +2,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { ArrowRight } from "lucide-react"
 import { posts } from "@/lib/blog-data"
+import { BLUR_DATA_URL } from "@/lib/image-utils"
 
 export function BlogSection() {
   return (
@@ -38,6 +39,8 @@ export function BlogSection() {
                   alt={post.heroAlt}
                   fill
                   className="object-cover transition-transform duration-300 group-hover:scale-105"
+                  placeholder="blur"
+                  blurDataURL={BLUR_DATA_URL}
                 />
               </div>
               <div className="flex flex-1 flex-col p-6">

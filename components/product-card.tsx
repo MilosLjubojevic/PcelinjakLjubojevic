@@ -1,8 +1,9 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useCallback } from "react"
 import Image from "next/image"
 import { useCart } from "@/lib/cart-context"
+import { BLUR_DATA_URL } from "@/lib/image-utils"
 import type { ProductWithOptions } from "@/lib/types/database"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -23,6 +24,8 @@ export function ProductCard({ product }: { product: ProductWithOptions }) {
     options[0]?.id?.toString() ?? ""
   )
   const [quantity, setQuantity] = useState(1)
+  const [imageLoaded, setImageLoaded] = useState(false)
+  const handleImageLoad = useCallback(() => setImageLoaded(true), [])
 
   const selectedOption = options.find(
     (o) => o.id.toString() === selectedOptionId
@@ -38,11 +41,17 @@ export function ProductCard({ product }: { product: ProductWithOptions }) {
   return (
     <Card className="group flex flex-col overflow-hidden border-border bg-card transition-shadow hover:shadow-lg">
       <div className="relative aspect-[4/3] overflow-hidden">
+        {!imageLoaded && (
+          <div className="absolute inset-0 animate-pulse bg-accent" />
+        )}
         <Image
           src={product.image}
           alt={product.alt || product.product_name}
           fill
-          className="object-cover transition-transform duration-500 group-hover:scale-105"
+          className={`object-cover transition-all duration-500 group-hover:scale-105 ${imageLoaded ? "opacity-100" : "opacity-0"}`}
+          placeholder="blur"
+          blurDataURL={BLUR_DATA_URL}
+          onLoad={handleImageLoad}
         />
       </div>
       <CardContent className="flex flex-1 flex-col p-6">

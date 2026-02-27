@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { BLUR_DATA_URL } from "@/lib/image-utils";
 
 const products = [
   {
@@ -60,6 +61,8 @@ export function ProductsSection() {
                   alt={product.name}
                   fill
                   className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  placeholder="blur"
+                  blurDataURL={BLUR_DATA_URL}
                 />
                 <span className="absolute top-4 left-4 rounded-sm bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground">
                   {product.tag}

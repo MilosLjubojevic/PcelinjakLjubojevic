@@ -9,7 +9,8 @@
       "Bash(npx next build:*)",
       "WebFetch(domain:supabase.com)",
       "WebFetch(domain:pcelinjakljubojevic.netlify.app)",
-      "Bash(git remote add origin https://github.com/MilosLjubojevic/PcelinjakLjubojevic.git)"
+      "Bash(git remote add origin https://github.com/MilosLjubojevic/PcelinjakLjubojevic.git)",
+      "Bash(git push -u origin master)"
     ]
   }
 }

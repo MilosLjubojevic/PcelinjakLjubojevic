@@ -1,76 +1,89 @@
 import Image from "next/image";
+import { BLUR_DATA_URL } from "@/lib/image-utils";
 
 const images = [
   {
     src: "/images/pcelinjak/SlikaPceleNaEvodiji.jpg",
     alt: "Pčele na evodiji — prirodna paša na Pčelinjaku Ljubojević",
-    span: "md:col-span-2 md:row-span-2",
-    sizes: "(max-width: 768px) 50vw, 50vw",
+    desktopSpan: "md:col-span-2 md:row-span-2",
+    mobileSpan: "col-span-2 aspect-[4/3]",
+    sizes: "(max-width: 768px) 100vw, 50vw",
   },
   {
     src: "/images/pcelinjak/SlikaPceleNaLetu.jpg",
     alt: "Medonosne pčele na letu ispred košnice",
-    span: "",
+    desktopSpan: "",
+    mobileSpan: "aspect-square",
     sizes: "(max-width: 768px) 50vw, 25vw",
   },
   {
     src: "/images/pcelinjak/SlikaMedaUKanti.jpeg",
     alt: "Svježe izvrcan domaći med u kanti — prirodni livadski med",
-    span: "",
+    desktopSpan: "",
+    mobileSpan: "aspect-square",
     sizes: "(max-width: 768px) 50vw, 25vw",
   },
   {
     src: "/images/pcelinjak/SlikaRamaSaMedom.jpg",
     alt: "Pčelinji ram pun zrelog meda spreman za vrcanje",
-    span: "md:col-span-2",
-    sizes: "(max-width: 768px) 50vw, 50vw",
+    desktopSpan: "md:col-span-2",
+    mobileSpan: "col-span-2 aspect-[16/9]",
+    sizes: "(max-width: 768px) 100vw, 50vw",
   },
   {
     src: "/images/pcelinjak/SlikaZatvorenogMedaURamu.jpg",
     alt: "Zatvoreni med u saću — poklopljene ćelije pune meda",
-    span: "",
+    desktopSpan: "",
+    mobileSpan: "aspect-square",
     sizes: "(max-width: 768px) 50vw, 25vw",
   },
   {
     src: "/images/pcelinjak/SlikaMaticeSaLeglom.jpg",
     alt: "Pčelinja matica sa zdravim leglom na ramu",
-    span: "",
+    desktopSpan: "",
+    mobileSpan: "aspect-square",
     sizes: "(max-width: 768px) 50vw, 25vw",
   },
   {
     src: "/images/pcelinjak/SlikaOtvorenogMedauRamu.jpg",
     alt: "Otvorene ćelije sa medom u pčelinjem ramu",
-    span: "md:col-span-2 md:row-span-2",
-    sizes: "(max-width: 768px) 50vw, 50vw",
+    desktopSpan: "md:col-span-2 md:row-span-2",
+    mobileSpan: "col-span-2 aspect-[4/3]",
+    sizes: "(max-width: 768px) 100vw, 50vw",
   },
   {
     src: "/images/pcelinjak/SlikaLeglaURamu.jpg",
     alt: "Zdravo pčelinje leglo u ramu — znak jake pčelinje zajednice",
-    span: "",
+    desktopSpan: "",
+    mobileSpan: "aspect-square",
     sizes: "(max-width: 768px) 50vw, 25vw",
   },
   {
     src: "/images/pcelinjak/SlikaPolena.jpg",
     alt: "Prirodni pčelinji polen — bogat izvor vitamina i minerala",
-    span: "",
+    desktopSpan: "",
+    mobileSpan: "aspect-square",
     sizes: "(max-width: 768px) 50vw, 25vw",
   },
   {
     src: "/images/pcelinjak/SlikaPcelinjakaUSumi.jpg",
     alt: "Pčelinjak Ljubojević u šumi — košnice okružene prirodom",
-    span: "md:col-span-2",
-    sizes: "(max-width: 768px) 50vw, 50vw",
+    desktopSpan: "md:col-span-2",
+    mobileSpan: "col-span-2 aspect-[16/9]",
+    sizes: "(max-width: 768px) 100vw, 50vw",
   },
   {
     src: "/images/pcelinjak/SlikaRegistracijePcelinjaka.jpg",
     alt: "Registrovan pčelinjak — legalan uzgoj pčela i proizvodnja meda",
-    span: "",
+    desktopSpan: "",
+    mobileSpan: "aspect-square",
     sizes: "(max-width: 768px) 50vw, 25vw",
   },
   {
     src: "/images/pcelinjak/PcelaNaPolenu.jpg",
     alt: "Pčela na cvijetu sakuplja polen — prirodno oprašivanje",
-    span: "",
+    desktopSpan: "",
+    mobileSpan: "aspect-square",
     sizes: "(max-width: 768px) 50vw, 25vw",
   },
 ];
@@ -93,11 +106,11 @@ export function BeeYardSection() {
           </p>
         </div>
 
-        <div className="mt-14 grid grid-cols-2 gap-5 md:grid-cols-4 md:auto-rows-[220px]">
+        <div className="mt-14 grid grid-cols-2 gap-3 md:gap-5 md:grid-cols-4 md:auto-rows-[220px]">
           {images.map((img) => (
             <div
               key={img.src}
-              className={`group relative overflow-hidden rounded-lg ${img.span}`}
+              className={`group relative overflow-hidden rounded-lg ${img.mobileSpan} md:aspect-auto ${img.desktopSpan}`}
             >
               <Image
                 src={img.src}
@@ -105,6 +118,8 @@ export function BeeYardSection() {
                 fill
                 sizes={img.sizes}
                 className="object-cover transition-transform duration-500 group-hover:scale-105"
+                placeholder="blur"
+                blurDataURL={BLUR_DATA_URL}
               />
               <div className="absolute inset-0 bg-foreground/0 transition-colors duration-300 group-hover:bg-foreground/10" />
             </div>

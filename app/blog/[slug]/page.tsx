@@ -1,6 +1,7 @@
 import Image from "next/image"
 import Link from "next/link"
 import { notFound } from "next/navigation"
+import { BLUR_DATA_URL } from "@/lib/image-utils"
 import {
   ArrowLeft,
   Wrench,
@@ -189,7 +190,7 @@ function ArticleBody({ post }: { post: BlogPost }) {
             {post.images.map((img, i) => (
               <figure key={i} className="overflow-hidden rounded-2xl">
                 <div className="relative aspect-4/3">
-                  <Image src={img.src} alt={img.alt} fill className="object-cover" />
+                  <Image src={img.src} alt={img.alt} fill className="object-cover" placeholder="blur" blurDataURL={BLUR_DATA_URL} />
                 </div>
                 {img.caption && (
                   <figcaption className="mt-3 text-center text-sm text-muted-foreground italic">
@@ -411,6 +412,8 @@ function SectionContent({
                 alt={section.image.alt}
                 fill
                 className="object-cover transition-transform duration-500 hover:scale-105"
+                placeholder="blur"
+                blurDataURL={BLUR_DATA_URL}
               />
             </div>
           </div>
@@ -446,6 +449,8 @@ function SectionContent({
                   alt={section.image.alt}
                   fill
                   className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  placeholder="blur"
+                  blurDataURL={BLUR_DATA_URL}
                 />
               </div>
             </div>
@@ -511,6 +516,8 @@ function HiveManagementHero({ post }: { post: BlogPost }) {
         fill
         className="object-cover object-[center_40%]"
         priority
+        placeholder="blur"
+        blurDataURL={BLUR_DATA_URL}
       />
       <div className="absolute inset-0 bg-linear-to-t from-foreground/80 via-foreground/40 to-foreground/20" />
       <div className="relative z-10 mx-auto w-full max-w-7xl px-6 pb-16 pt-32">
@@ -554,6 +561,8 @@ function HarvestHero({ post }: { post: BlogPost }) {
               fill
               className="object-cover"
               priority
+              placeholder="blur"
+              blurDataURL={BLUR_DATA_URL}
             />
           </div>
         </div>
@@ -586,6 +595,8 @@ function EducationHero({ post }: { post: BlogPost }) {
             fill
             className="object-cover"
             priority
+            placeholder="blur"
+            blurDataURL={BLUR_DATA_URL}
           />
         </div>
       </div>
@@ -621,6 +632,8 @@ function SeasonalCareHero({ post }: { post: BlogPost }) {
             fill
             className="object-cover"
             priority
+            placeholder="blur"
+            blurDataURL={BLUR_DATA_URL}
           />
         </div>
       </div>

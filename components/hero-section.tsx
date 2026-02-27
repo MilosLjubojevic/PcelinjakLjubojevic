@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
+import { BLUR_DATA_URL } from "@/lib/image-utils";
 
 export function HeroSection() {
   return (
@@ -10,6 +11,8 @@ export function HeroSection() {
         fill
         className="object-cover"
         priority
+        placeholder="blur"
+        blurDataURL={BLUR_DATA_URL}
       />
       <div className="absolute inset-0 bg-foreground/50" />
 
