@@ -31,7 +31,7 @@ export async function sendContactEmail(data: ContactFormData) {
 
   try {
     await resend.emails.send({
-      from: "Pčelinjak Ljubojević <onboarding@resend.dev>",
+      from: "Pčelinjak Ljubojević <kontakt@pcelinjakljubojevicbijeljina.com>",
       to: TO_EMAIL,
       replyTo: email,
       subject: `Nova poruka od ${escapeHtml(firstName)} ${escapeHtml(lastName)} — Pčelinjak Ljubojević`,
