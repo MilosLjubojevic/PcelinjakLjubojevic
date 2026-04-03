@@ -1,19 +1,26 @@
 import Link from "next/link";
 import Image from "next/image";
+import { MapPin } from "lucide-react";
+
+const MAPS_URL =
+  "https://www.google.com/maps/place/Pcelinjak+Ljubojevic/data=!4m2!3m1!1s0x0:0x675e009c76f6e038?sa=X&ved=1t:2428&ictx=111";
 
 const footerLinks = {
   Navigacija: [
-    { label: "O Nama", href: "#about" },
-    { label: "Pčelinjak", href: "#bee-yard" },
-    { label: "Proizvodi", href: "#products" },
-    { label: "Blog", href: "#blog" },
-    { label: "Kontakt", href: "#contact" },
+    { label: "O Nama", href: "/#about" },
+    { label: "Pčelinjak", href: "/#bee-yard" },
+    { label: "Proizvodi", href: "/#products" },
+    { label: "Blog", href: "/#blog" },
+    { label: "Kontakt", href: "/#contact" },
+    { label: "Politika Privatnosti", href: "/politika-privatnosti" },
+    { label: "Uslovi Isporuke", href: "/uslovi-isporuke" },
   ],
   Resursi: [
-    { label: "Savjeti za Pčelare", href: "#blog" },
-    { label: "Vodič za Oprašivače", href: "#blog" },
-    { label: "Recepti sa Medom", href: "#blog" },
-    { label: "Česta Pitanja", href: "#contact" },
+    { label: "Vodič za Pčelarstvo", href: "/blog/vodic-za-pcelarstvo" },
+    { label: "Proljetni Pregled Košnica", href: "/blog/spring-hive-inspections" },
+    { label: "Vrcanje Sirovog Meda", href: "/blog/art-of-extracting-raw-honey" },
+    { label: "Značaj Pčela u Oprašivanju", href: "/blog/znacaj-pcela-u-oprasivanju" },
+    { label: "Prezimljavanje Pčela", href: "/blog/prezimljavanje-pcela" },
   ],
 };
 
@@ -39,6 +46,15 @@ export function SiteFooter() {
               Porodični pčelinjak sa 45 godina tradicije — proizvodnja domaćeg
               meda, polena, propolisa, matične mliječi i prodaja pčelinjih matica.
             </p>
+            <a
+              href={MAPS_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-3 inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-primary"
+            >
+              <MapPin className="h-4 w-4" />
+              Bijeljina, Donji Bordac 90
+            </a>
           </div>
 
           {Object.entries(footerLinks).map(([heading, links]) => (

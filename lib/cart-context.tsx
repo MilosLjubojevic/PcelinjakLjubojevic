@@ -13,6 +13,7 @@ import { parsePrice } from "@/lib/types/database"
 
 type CartContextType = {
   items: CartItem[]
+  hydrated: boolean
   addItem: (
     product: Product,
     priceOption: ProductPriceOption,
@@ -29,6 +30,8 @@ const CartContext = createContext<CartContextType | null>(null)
 
 const CART_KEY = "pcelinjak-cart"
 
+export const SHIPPING_COST = 15
+
 export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([])
   const [hydrated, setHydrated] = useState(false)
@@ -40,7 +43,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
       if (stored) {
         setItems(JSON.parse(stored))
       }
-    } catch {}
+    } catch (err) {
+      if (process.env.NODE_ENV === "development") {
+        console.error("[Cart] Failed to parse localStorage:", err)
+      }
+    }
     setHydrated(true)
   }, [])
 
@@ -101,6 +108,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     <CartContext.Provider
       value={{
         items,
+        hydrated,
         addItem,
         removeItem,
         updateQuantity,

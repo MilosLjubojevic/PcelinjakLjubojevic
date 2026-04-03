@@ -39,6 +39,7 @@ export function BlogSection() {
                   alt={post.heroAlt}
                   fill
                   className="object-cover transition-transform duration-300 group-hover:scale-105"
+                  style={post.heroObjectPosition ? { objectPosition: post.heroObjectPosition } : undefined}
                   placeholder="blur"
                   blurDataURL={BLUR_DATA_URL}
                 />

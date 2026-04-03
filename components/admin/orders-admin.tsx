@@ -1,11 +1,21 @@
 "use client"
 
 import { useState } from "react"
-import { updateOrderSent } from "@/app/admin/actions"
+import { updateOrderSent, deleteOrder } from "@/app/admin/actions"
 import type { OrderWithItems } from "@/lib/types/database"
 import { parsePrice } from "@/lib/types/database"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 import {
   Dialog,
   DialogContent,
@@ -21,7 +31,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { Switch } from "@/components/ui/switch"
-import { Eye } from "lucide-react"
+import { Eye, Trash2 } from "lucide-react"
 import { toast } from "sonner"
 
 type Filter = "all" | "pending" | "sent"
@@ -29,12 +39,26 @@ type Filter = "all" | "pending" | "sent"
 export function OrdersAdmin({ orders }: { orders: OrderWithItems[] }) {
   const [filter, setFilter] = useState<Filter>("all")
   const [selectedOrder, setSelectedOrder] = useState<OrderWithItems | null>(null)
+  const [orderToDelete, setOrderToDelete] = useState<OrderWithItems | null>(null)
 
   const filtered = orders.filter((o) => {
     if (filter === "pending") return !o.sent
     if (filter === "sent") return o.sent
     return true
   })
+
+  const handleDeleteOrder = async () => {
+    if (!orderToDelete) return
+    try {
+      await deleteOrder(orderToDelete.id)
+      toast.success("Narudžba obrisana")
+      if (selectedOrder?.id === orderToDelete.id) setSelectedOrder(null)
+    } catch {
+      toast.error("Greška pri brisanju")
+    } finally {
+      setOrderToDelete(null)
+    }
+  }
 
   const handleToggleSent = async (orderId: number, sent: boolean) => {
     try {
@@ -108,6 +132,7 @@ export function OrdersAdmin({ orders }: { orders: OrderWithItems[] }) {
               <TableHead>Ukupno</TableHead>
               <TableHead>Poslano</TableHead>
               <TableHead className="w-16">Detalji</TableHead>
+              <TableHead className="w-16">Briši</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -143,12 +168,22 @@ export function OrdersAdmin({ orders }: { orders: OrderWithItems[] }) {
                     <Eye className="h-3.5 w-3.5" />
                   </Button>
                 </TableCell>
+                <TableCell>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="h-8 w-8 text-destructive hover:bg-destructive hover:text-destructive-foreground"
+                    onClick={() => setOrderToDelete(order)}
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </Button>
+                </TableCell>
               </TableRow>
             ))}
             {filtered.length === 0 && (
               <TableRow>
                 <TableCell
-                  colSpan={8}
+                  colSpan={9}
                   className="py-8 text-center text-muted-foreground"
                 >
                   Nema narudžbi.
@@ -158,6 +193,30 @@ export function OrdersAdmin({ orders }: { orders: OrderWithItems[] }) {
           </TableBody>
         </Table>
       </div>
+
+      {/* Delete confirmation dialog */}
+      <AlertDialog open={!!orderToDelete} onOpenChange={() => setOrderToDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Obriši narudžbu #{orderToDelete?.id}</AlertDialogTitle>
+            <AlertDialogDescription>
+              Ova akcija je nepovratna. Narudžba od{" "}
+              <span className="font-medium">
+                {orderToDelete?.name} {orderToDelete?.lastname}
+              </span>{" "}
+              će biti trajno obrisana.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Otkaži</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteOrder}
+            >
+              Obriši
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       {/* Order detail dialog */}
       <Dialog

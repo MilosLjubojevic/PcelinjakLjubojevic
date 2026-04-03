@@ -11,6 +11,7 @@ export function AboutSection() {
               src="/images/pcelinjak/SlikaRojaNaGrani.jpg"
               alt="Roj pčela na grani — Pčelinjak Ljubojević"
               fill
+              sizes="(max-width: 768px) 100vw, 50vw"
               className="object-cover brightness-105 contrast-105 saturate-110 blur-[0.5px]"
               placeholder="blur"
               blurDataURL={BLUR_DATA_URL}
@@ -40,8 +41,8 @@ export function AboutSection() {
               </p>
               <p>
                 Bilo da tražite kvalitetan domaći med za svoju porodicu,
-                pčelinje proizvode za zdravlje ili selekcionirane matice za vaš
-                pčelinjak — kod nas ćete naći provjerenu robu i iskren savjet.
+                pčelinje proizvode za zdravlje ili matice za vaš pčelinjak — kod
+                nas ćete naći provjerenu robu i iskren savjet.
               </p>
             </div>
 

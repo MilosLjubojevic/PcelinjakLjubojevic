@@ -269,7 +269,7 @@ export function ProductsAdmin({
                           <AlertDialogCancel>Otkaži</AlertDialogCancel>
                           <AlertDialogAction
                             onClick={() => handleDelete(product.id)}
-                            className="bg-destructive text-destructive-foreground"
+                            className="bg-destructive text-destructive-foreground active:scale-95"
                           >
                             Obriši
                           </AlertDialogAction>

@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { useCart } from "@/lib/cart-context"
+import { useCart, SHIPPING_COST } from "@/lib/cart-context"
 import { parsePrice } from "@/lib/types/database"
 import { placeOrder } from "./actions"
 import { SiteHeader } from "@/components/site-header"
@@ -60,8 +60,9 @@ export default function CheckoutPage() {
       })
       clearCart()
       router.push("/narudzba/uspjesno")
-    } catch {
-      toast.error("Greška pri slanju narudžbe. Pokušajte ponovo.")
+    } catch (err) {
+      const message = err instanceof Error ? err.message : null
+      toast.error(message ?? "Greška pri slanju narudžbe. Pokušajte ponovo.")
     } finally {
       setSubmitting(false)
     }
@@ -238,11 +239,21 @@ export default function CheckoutPage() {
                         </div>
                       ))}
                     </div>
-                    <div className="mt-4 flex items-center justify-between border-t border-border pt-4">
-                      <span className="font-medium">Ukupno</span>
-                      <span className="font-serif text-xl font-bold text-primary">
-                        {totalPrice.toFixed(2)} KM
-                      </span>
+                    <div className="mt-4 space-y-2 border-t border-border pt-4">
+                      <div className="flex items-center justify-between text-sm text-muted-foreground">
+                        <span>Proizvodi</span>
+                        <span>{totalPrice.toFixed(2)} KM</span>
+                      </div>
+                      <div className="flex items-center justify-between text-sm text-muted-foreground">
+                        <span>Poštarina</span>
+                        <span>{SHIPPING_COST.toFixed(2)} KM</span>
+                      </div>
+                      <div className="flex items-center justify-between border-t border-border pt-2">
+                        <span className="font-medium">Ukupno</span>
+                        <span className="font-serif text-xl font-bold text-primary">
+                          {(totalPrice + SHIPPING_COST).toFixed(2)} KM
+                        </span>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>

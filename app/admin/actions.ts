@@ -121,3 +121,46 @@ export async function updateOrderSent(orderId: number, sent: boolean) {
 
   revalidatePath("/admin/narudzbe")
 }
+
+export async function deleteOrder(orderId: number) {
+  const supabase = await createClient()
+
+  const { data: order, error: orderFetchError } = await supabase
+    .from("Orders")
+    .select("sent")
+    .eq("id", orderId)
+    .single()
+
+  if (orderFetchError) throw new Error(orderFetchError.message)
+
+  if (!order.sent) {
+    const { data: items, error: fetchError } = await supabase
+      .from("Order_items")
+      .select("product_price_option, quantity")
+      .eq("order_id", orderId)
+
+    if (fetchError) throw new Error(fetchError.message)
+
+    for (const item of items ?? []) {
+      const { data: option, error: optError } = await supabase
+        .from("Product_price_options")
+        .select("stock")
+        .eq("id", item.product_price_option)
+        .single()
+
+      if (optError) throw new Error(optError.message)
+
+      await supabase
+        .from("Product_price_options")
+        .update({ stock: (option.stock ?? 0) + item.quantity })
+        .eq("id", item.product_price_option)
+    }
+  }
+
+  await supabase.from("Order_items").delete().eq("order_id", orderId)
+
+  const { error } = await supabase.from("Orders").delete().eq("id", orderId)
+  if (error) throw new Error(error.message)
+
+  revalidatePath("/admin/narudzbe")
+}

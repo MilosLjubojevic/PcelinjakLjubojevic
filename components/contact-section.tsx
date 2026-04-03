@@ -1,12 +1,44 @@
 "use client"
 
-import { Mail, MapPin, Phone } from "lucide-react"
+import { useState } from "react"
+import { Mail, MapPin, Phone, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
+import { toast } from "sonner"
+import { sendContactEmail } from "@/app/contact/actions"
 
 export function ContactSection() {
+  const [sending, setSending] = useState(false)
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+    const form = e.currentTarget
+    const formData = new FormData(form)
+
+    const firstName = formData.get("firstName") as string
+    const lastName = formData.get("lastName") as string
+    const email = formData.get("email") as string
+    const message = formData.get("message") as string
+
+    if (!firstName || !lastName || !email || !message) {
+      toast.error("Molimo popunite sva polja.")
+      return
+    }
+
+    setSending(true)
+    const result = await sendContactEmail({ firstName, lastName, email, message })
+    setSending(false)
+
+    if (result.success) {
+      toast.success("Poruka je uspješno poslana!")
+      form.reset()
+    } else {
+      toast.error(result.error ?? "Greška pri slanju poruke.")
+    }
+  }
+
   return (
     <section id="contact" className="scroll-mt-20 bg-background py-24">
       <div className="mx-auto max-w-7xl px-6">
@@ -28,14 +60,16 @@ export function ContactSection() {
           <div className="md:col-span-3">
             <form
               className="space-y-6"
-              onSubmit={(e) => e.preventDefault()}
+              onSubmit={handleSubmit}
             >
               <div className="grid gap-6 md:grid-cols-2">
                 <div className="space-y-2">
                   <Label htmlFor="first-name">Ime</Label>
                   <Input
                     id="first-name"
+                    name="firstName"
                     placeholder="Marko"
+                    required
                     className="bg-card border-border"
                   />
                 </div>
@@ -43,7 +77,9 @@ export function ContactSection() {
                   <Label htmlFor="last-name">Prezime</Label>
                   <Input
                     id="last-name"
+                    name="lastName"
                     placeholder="Petrović"
+                    required
                     className="bg-card border-border"
                   />
                 </div>
@@ -53,8 +89,10 @@ export function ContactSection() {
                 <Label htmlFor="email">E-mail</Label>
                 <Input
                   id="email"
+                  name="email"
                   type="email"
-                  placeholder="jane@example.com"
+                  placeholder="vas@email.com"
+                  required
                   className="bg-card border-border"
                 />
               </div>
@@ -63,8 +101,10 @@ export function ContactSection() {
                 <Label htmlFor="message">Poruka</Label>
                 <Textarea
                   id="message"
+                  name="message"
                   placeholder="Napišite nam šta vas zanima — narudžba, pitanje, saradnja..."
                   rows={5}
+                  required
                   className="bg-card border-border resize-none"
                 />
               </div>
@@ -72,28 +112,38 @@ export function ContactSection() {
               <Button
                 type="submit"
                 size="lg"
+                disabled={sending}
                 className="w-full bg-primary text-primary-foreground hover:bg-primary/90 md:w-auto"
               >
-                Pošalji Poruku
+                {sending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                {sending ? "Šalje se..." : "Pošalji Poruku"}
               </Button>
             </form>
           </div>
 
           <div className="space-y-8 md:col-span-2">
-            <ContactInfo
-              icon={<MapPin className="h-5 w-5" />}
-              title="Posjetite Nas"
-              lines={["1234 Meadow Lane", "Cloverdale, CA 95425"]}
-            />
+            <a
+              href="https://www.google.com/maps/place/Pcelinjak+Ljubojevic/data=!4m2!3m1!1s0x0:0x675e009c76f6e038?sa=X&ved=1t:2428&ictx=111"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group/map"
+            >
+              <ContactInfo
+                icon={<MapPin className="h-5 w-5" />}
+                title="Posjetite Nas"
+                lines={["Bijeljina, Donji Bordac 90"]}
+                clickable
+              />
+            </a>
             <ContactInfo
               icon={<Phone className="h-5 w-5" />}
               title="Pozovite Nas"
-              lines={["(707) 555-0192"]}
+              lines={["+381 66 861 439", "+381 65 994 971"]}
             />
             <ContactInfo
               icon={<Mail className="h-5 w-5" />}
               title="Pišite Nam"
-              lines={["hello@goldenhiveapiary.com"]}
+              lines={["milos.ljubojevic36@gmail.com"]}
             />
 
             <div className="rounded-lg border border-border bg-card p-6">
@@ -103,9 +153,6 @@ export function ContactSection() {
               <div className="mt-3 space-y-1.5 text-sm text-muted-foreground">
                 <p>Subota i nedjelja: 10:00 - 16:00</p>
                 <p>Radnim danima: Samo po dogovoru</p>
-                <p className="pt-2 text-xs italic">
-                  Molimo pozovite unaprijed za grupne posjete
-                </p>
               </div>
             </div>
           </div>
@@ -119,20 +166,22 @@ function ContactInfo({
   icon,
   title,
   lines,
+  clickable,
 }: {
   icon: React.ReactNode
   title: string
   lines: string[]
+  clickable?: boolean
 }) {
   return (
-    <div className="flex gap-4">
-      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+    <div className="flex items-start gap-4">
+      <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary ${clickable ? "transition-colors group-hover/map:bg-primary/20" : ""}`}>
         {icon}
       </div>
       <div>
-        <h4 className="font-medium text-foreground">{title}</h4>
-        {lines.map((line) => (
-          <p key={line} className="mt-0.5 text-sm text-muted-foreground">
+        <h4 className={`font-medium text-foreground ${clickable ? "group-hover/map:text-primary transition-colors" : ""}`}>{title}</h4>
+        {lines.map((line, index) => (
+          <p key={index} className={`mt-0.5 text-sm text-muted-foreground ${clickable ? "group-hover/map:text-primary/70 transition-colors" : ""}`}>
             {line}
           </p>
         ))}

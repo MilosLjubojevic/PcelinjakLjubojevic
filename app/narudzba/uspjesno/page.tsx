@@ -1,8 +1,13 @@
+import type { Metadata } from "next"
 import Link from "next/link"
 import { SiteHeader } from "@/components/site-header"
 import { SiteFooter } from "@/components/site-footer"
 import { Button } from "@/components/ui/button"
 import { CheckCircle } from "lucide-react"
+
+export const metadata: Metadata = {
+  robots: { index: false, follow: false },
+}
 
 export default function OrderSuccessPage() {
   return (
@@ -15,8 +20,7 @@ export default function OrderSuccessPage() {
             Narudžba Primljena!
           </h1>
           <p className="mt-3 text-muted-foreground leading-relaxed">
-            Hvala vam na narudžbi. Kontaktiraćemo vas u najkraćem roku radi
-            potvrde i dogovora oko dostave.
+            Hvala vam na narudžbi. Narudžbe šaljemo svake srijede.
           </p>
           <Button
             size="lg"

@@ -18,12 +18,73 @@ import {
   Leaf,
   CloudSnow,
   Crown,
+  TrendingUp,
+  CloudSun,
+  Home,
+  Coins,
 } from "lucide-react"
 import type { LucideIcon } from "lucide-react"
 import { SiteHeader } from "@/components/site-header"
 import { SiteFooter } from "@/components/site-footer"
+import { BreadcrumbJsonLd } from "@/components/seo"
 import { posts, getPostBySlug, type BlogPost } from "@/lib/blog-data"
+import { ArrowRight } from "lucide-react"
 import type { Metadata } from "next"
+import { BASE_URL } from "@/lib/constants"
+
+function parseInlineLinks(text: string): React.ReactNode {
+  const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g
+  const parts: React.ReactNode[] = []
+  let lastIndex = 0
+  let match
+
+  const sanitizeUrl = (url: string): string => {
+    try {
+      const parsed = new URL(url, 'http://dummy.com') // Use dummy base for relative URLs
+      if (['http:', 'https:', 'mailto:', 'tel:'].includes(parsed.protocol) || url.startsWith('/')) {
+        return url
+      }
+      return '#'
+    } catch {
+      // If parsing fails, check if it's a relative path
+      if (url.startsWith('/') || url.startsWith('./') || url.startsWith('../')) {
+        return url
+      }
+      return '#'
+    }
+  }
+
+  while ((match = linkRegex.exec(text)) !== null) {
+    if (match.index > lastIndex) {
+      parts.push(text.slice(lastIndex, match.index))
+    }
+    const sanitizedHref = sanitizeUrl(match[2])
+    parts.push(
+      <Link
+        key={match.index}
+        href={sanitizedHref}
+        className="font-medium text-primary underline underline-offset-2 hover:text-primary/80"
+      >
+        {match[1]}
+      </Link>
+    )
+    lastIndex = match.index + match[0].length
+  }
+
+  if (lastIndex < text.length) {
+    parts.push(text.slice(lastIndex))
+  }
+
+  return parts.length > 1 ? parts : text
+}
+
+function formatDate(isoDate: string): string {
+  return new Intl.DateTimeFormat("sr-Latn", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  }).format(new Date(isoDate))
+}
 
 const iconMap: Record<string, LucideIcon> = {
   Wrench,
@@ -35,6 +96,12 @@ const iconMap: Record<string, LucideIcon> = {
   Snowflake,
   HelpCircle,
   Crown,
+  Flower2,
+  Leaf,
+  TrendingUp,
+  CloudSun,
+  Home,
+  Coins,
 }
 
 export function generateStaticParams() {
@@ -57,6 +124,7 @@ export async function generateMetadata({
       description: post.excerpt,
       type: "article",
       publishedTime: post.date,
+      modifiedTime: post.lastModified ?? post.date,
       images: [{ url: post.heroImage, alt: post.heroAlt }],
     },
     alternates: {
@@ -71,16 +139,36 @@ function BlogJsonLd({ post }: { post: BlogPost }) {
     "@type": "Article",
     headline: post.title,
     description: post.excerpt,
-    image: post.heroImage,
+    image: `${BASE_URL}${post.heroImage}`,
     datePublished: post.date,
+    dateModified: post.lastModified ?? post.date,
+    url: `${BASE_URL}/blog/${post.slug}`,
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": `${BASE_URL}/blog/${post.slug}`,
+    },
     author: {
-      "@type": "Organization",
-      name: "Pčelinjak Ljubojević",
+      "@type": "Person",
+      "@id": `${BASE_URL}/#milos-ljubojevic`,
+      name: "Miloš Ljubojević",
+      url: `${BASE_URL}/#about`,
+      worksFor: {
+        "@type": "Organization",
+        "@id": `${BASE_URL}/#organization`,
+        name: "Pčelinjak Ljubojević",
+      },
     },
     publisher: {
       "@type": "Organization",
       name: "Pčelinjak Ljubojević",
+      logo: {
+        "@type": "ImageObject",
+        url: `${BASE_URL}/LogoPcele.png`,
+        width: 200,
+        height: 200,
+      },
     },
+    inLanguage: "sr",
   }
 
   return (
@@ -91,32 +179,19 @@ function BlogJsonLd({ post }: { post: BlogPost }) {
   )
 }
 
-function FAQJsonLd({ sections }: { sections: { title: string; content: string[] }[] }) {
-  const faqSection = sections.find((s) => s.title === "Najčešća pitanja")
-  if (!faqSection) return null
-
-  const faqSchema = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: faqSection.content.map((item) => ({
-      "@type": "Question",
-      name: item.includes("?") ? item.slice(0, item.indexOf("?") + 1) : item.split(".")[0] + "?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: item,
-      },
-    })),
-  }
-
-  return (
-    <script
-      type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-    />
-  )
-}
 
 /* ─── Shared pieces ─── */
+
+function AuthorByline({ light = false }: { light?: boolean }) {
+  return (
+    <p className={`mt-3 text-sm ${light ? "text-primary-foreground/60" : "text-muted-foreground"}`}>
+      Napisao:{" "}
+      <span className={`font-medium ${light ? "text-primary-foreground/80" : "text-foreground/70"}`}>
+        Miloš Ljubojević
+      </span>
+    </p>
+  )
+}
 
 function BackLink({ light = false }: { light?: boolean }) {
   return (
@@ -190,7 +265,7 @@ function ArticleBody({ post }: { post: BlogPost }) {
             {post.images.map((img, i) => (
               <figure key={i} className="overflow-hidden rounded-2xl">
                 <div className="relative aspect-4/3">
-                  <Image src={img.src} alt={img.alt} fill className="object-cover" placeholder="blur" blurDataURL={BLUR_DATA_URL} />
+                  <Image src={img.src} alt={img.alt} fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover" placeholder="blur" blurDataURL={BLUR_DATA_URL} />
                 </div>
                 {img.caption && (
                   <figcaption className="mt-3 text-center text-sm text-muted-foreground italic">
@@ -223,22 +298,22 @@ function ArticleBody({ post }: { post: BlogPost }) {
 /* ─── Seasonal Card Grid ─── */
 
 const seasonIcons: Record<string, LucideIcon> = {
-  "Proleće": Flower2,
-  "Leto": Sun,
+  "Proljeće": Flower2,
+  "Ljeto": Sun,
   "Jesen": Leaf,
   "Zima": CloudSnow,
 }
 
 const seasonColors: Record<string, string> = {
-  "Proleće": "bg-emerald-50 border-emerald-200 dark:bg-emerald-950/30 dark:border-emerald-800",
-  "Leto": "bg-amber-50 border-amber-200 dark:bg-amber-950/30 dark:border-amber-800",
+  "Proljeće": "bg-emerald-50 border-emerald-200 dark:bg-emerald-950/30 dark:border-emerald-800",
+  "Ljeto": "bg-amber-50 border-amber-200 dark:bg-amber-950/30 dark:border-amber-800",
   "Jesen": "bg-orange-50 border-orange-200 dark:bg-orange-950/30 dark:border-orange-800",
   "Zima": "bg-sky-50 border-sky-200 dark:bg-sky-950/30 dark:border-sky-800",
 }
 
 const seasonIconColors: Record<string, string> = {
-  "Proleće": "text-emerald-600 dark:text-emerald-400",
-  "Leto": "text-amber-600 dark:text-amber-400",
+  "Proljeće": "text-emerald-600 dark:text-emerald-400",
+  "Ljeto": "text-amber-600 dark:text-amber-400",
   "Jesen": "text-orange-600 dark:text-orange-400",
   "Zima": "text-sky-600 dark:text-sky-400",
 }
@@ -291,7 +366,7 @@ function FAQAccordion({ content }: { content: string[] }) {
           </summary>
           <div className="border-t border-border px-5 py-4">
             <p className="text-[0.95rem] leading-relaxed text-foreground/80">
-              {item}
+              {parseInlineLinks(item.includes("?") ? item.slice(item.indexOf("?") + 1).trim() : item)}
             </p>
           </div>
         </details>
@@ -373,14 +448,15 @@ function SectionContent({
   section,
   index,
 }: {
-  section: { icon: string; title: string; image: { src: string; alt: string }; content: string[] }
+  section: { icon: string; title: string; image: { src: string; alt: string; objectPosition?: string; wideCrop?: boolean }; contentImages?: { src: string; alt: string }[]; content: string[] }
   index: number
 }) {
   const Icon = iconMap[section.icon]
   const isEven = index % 2 === 0
   const isSeasonal = section.title === "Pčele tokom cijele godine"
-  const isFAQ = section.title === "Najčešća pitanja"
+  const isFAQ = section.title.startsWith("Najčešća pitanja")
   const isFullWidth = isSeasonal || isFAQ
+  const hasContentImages = section.contentImages && section.contentImages.length > 0
 
   return (
     <div
@@ -411,6 +487,7 @@ function SectionContent({
                 src={section.image.src}
                 alt={section.image.alt}
                 fill
+                sizes="(max-width: 768px) 100vw, 50vw"
                 className="object-cover transition-transform duration-500 hover:scale-105"
                 placeholder="blur"
                 blurDataURL={BLUR_DATA_URL}
@@ -422,33 +499,78 @@ function SectionContent({
         {/* FAQ: accordion, no side image */}
         {isFAQ && <FAQAccordion content={section.content} />}
 
+        {/* Paired content: each paragraph with its own image, alternating sides */}
+        {!isFullWidth && hasContentImages && (
+          <div className="space-y-10">
+            {section.content.map((p, j) => {
+              const img = section.contentImages![j]
+              const rowReversed = j % 2 !== 0
+              return (
+                <div
+                  key={j}
+                  className={`grid items-center gap-6 md:grid-cols-2 ${rowReversed ? "md:[direction:rtl] md:[&>*]:[direction:ltr]" : ""}`}
+                >
+                  <div className="group relative aspect-4/3 overflow-hidden rounded-2xl">
+                    {img ? (
+                      <Image
+                        src={img.src}
+                        alt={img.alt}
+                        fill
+                        sizes="(max-width: 768px) 100vw, 50vw"
+                        className="object-cover transition-transform duration-500 group-hover:scale-105"
+                        placeholder="blur"
+                        blurDataURL={BLUR_DATA_URL}
+                      />
+                    ) : (
+                      <Image
+                        src={section.image.src}
+                        alt={section.image.alt}
+                        fill
+                        sizes="(max-width: 768px) 100vw, 50vw"
+                        className="object-cover transition-transform duration-500 group-hover:scale-105"
+                        placeholder="blur"
+                        blurDataURL={BLUR_DATA_URL}
+                      />
+                    )}
+                  </div>
+                  <p className="text-[1.05rem] leading-relaxed text-foreground/85">
+                    {parseInlineLinks(p)}
+                  </p>
+                </div>
+              )
+            })}
+          </div>
+        )}
+
         {/* Standard sections: alternating text + image */}
-        {!isFullWidth && (
+        {!isFullWidth && !hasContentImages && (
           <div
-            className={`grid items-start gap-8 md:grid-cols-5 ${
+            className={`grid items-start gap-8 ${section.image.wideCrop ? "md:grid-cols-2" : "md:grid-cols-5"} ${
               !isEven ? "md:[direction:rtl] md:[&>*]:[direction:ltr]" : ""
             }`}
           >
-            {/* Text side — 3 cols */}
-            <div className="space-y-4 md:col-span-3">
+            {/* Text side */}
+            <div className={`space-y-4 ${section.image.wideCrop ? "" : "md:col-span-3"}`}>
               {section.content.map((p, j) => (
                 <p
                   key={j}
                   className="text-[1.05rem] leading-relaxed text-foreground/85"
                 >
-                  {p}
+                  {parseInlineLinks(p)}
                 </p>
               ))}
             </div>
 
-            {/* Image side — 2 cols */}
-            <div className="md:col-span-2">
-              <div className="group relative aspect-4/3 overflow-hidden rounded-2xl">
+            {/* Image side */}
+            <div className={section.image.wideCrop ? "" : "md:col-span-2"}>
+              <div className={`group relative overflow-hidden rounded-2xl ${section.image.wideCrop ? "aspect-auto" : "aspect-4/3"}`}>
                 <Image
                   src={section.image.src}
                   alt={section.image.alt}
-                  fill
-                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  {...(section.image.wideCrop ? { width: 800, height: 600 } : { fill: true })}
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className={`${section.image.wideCrop ? "w-full h-auto" : "object-cover"} transition-transform duration-500 group-hover:scale-105`}
+                  style={section.image.objectPosition ? { objectPosition: section.image.objectPosition } : undefined}
                   placeholder="blur"
                   blurDataURL={BLUR_DATA_URL}
                 />
@@ -494,6 +616,24 @@ function SectionedArticleBody({ post }: { post: BlogPost }) {
         </div>
       </div>
 
+      {/* CTA */}
+      {post.cta && (
+        <div className="mx-auto max-w-4xl px-6 py-12">
+          <div className="rounded-2xl bg-primary/5 border border-primary/15 px-8 py-10 text-center">
+            <p className="mb-6 text-lg font-medium text-foreground">
+              Želite da unaprijedite oprašivanje i osnažite pčelinjak?
+            </p>
+            <Link
+              href={post.cta.href}
+              className="inline-flex items-center gap-2 rounded-lg bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-sm transition-colors hover:bg-primary/90"
+            >
+              {post.cta.text}
+              <ArrowLeft className="h-4 w-4 rotate-180" />
+            </Link>
+          </div>
+        </div>
+      )}
+
       {/* Back link */}
       <div className="mx-auto max-w-4xl px-6">
         <div className="mt-4 border-t border-border py-8">
@@ -514,7 +654,9 @@ function HiveManagementHero({ post }: { post: BlogPost }) {
         src={post.heroImage}
         alt={post.heroAlt}
         fill
-        className="object-cover object-[center_40%]"
+        sizes="100vw"
+        className="object-cover"
+        style={{ objectPosition: post.heroObjectPosition ?? "center 40%" }}
         priority
         placeholder="blur"
         blurDataURL={BLUR_DATA_URL}
@@ -522,13 +664,14 @@ function HiveManagementHero({ post }: { post: BlogPost }) {
       <div className="absolute inset-0 bg-linear-to-t from-foreground/80 via-foreground/40 to-foreground/20" />
       <div className="relative z-10 mx-auto w-full max-w-7xl px-6 pb-16 pt-32">
         <BackLink light />
-        <CategoryBadge category={post.category} date={post.date} variant="accent" />
+        <CategoryBadge category={post.category} date={formatDate(post.date)} variant="accent" />
         <h1 className="mt-4 max-w-3xl font-serif text-3xl font-bold leading-tight text-primary-foreground md:text-5xl">
           {post.title}
         </h1>
         <p className="mt-4 max-w-xl text-lg leading-relaxed text-primary-foreground/80">
           {post.excerpt}
         </p>
+        <AuthorByline light />
       </div>
     </section>
   )
@@ -545,13 +688,14 @@ function HarvestHero({ post }: { post: BlogPost }) {
           {/* Text side */}
           <div className="py-8 md:py-16">
             <BackLink />
-            <CategoryBadge category={post.category} date={post.date} />
+            <CategoryBadge category={post.category} date={formatDate(post.date)} />
             <h1 className="mt-4 font-serif text-3xl font-bold leading-tight text-foreground md:text-5xl">
               {post.title}
             </h1>
             <p className="mt-4 text-lg leading-relaxed text-muted-foreground">
               {post.excerpt}
             </p>
+            <AuthorByline />
           </div>
           {/* Image side */}
           <div className="relative aspect-3/4 overflow-hidden rounded-t-2xl md:rounded-2xl">
@@ -559,6 +703,7 @@ function HarvestHero({ post }: { post: BlogPost }) {
               src={post.heroImage}
               alt={post.heroAlt}
               fill
+              sizes="(max-width: 768px) 100vw, 50vw"
               className="object-cover"
               priority
               placeholder="blur"
@@ -579,13 +724,14 @@ function EducationHero({ post }: { post: BlogPost }) {
     <section className="bg-background pt-28 pb-0">
       <div className="mx-auto max-w-3xl px-6 text-center">
         <BackLink />
-        <CategoryBadge category={post.category} date={post.date} />
+        <CategoryBadge category={post.category} date={formatDate(post.date)} />
         <h1 className="mt-4 font-serif text-3xl font-bold leading-tight text-foreground md:text-5xl text-balance">
           {post.title}
         </h1>
         <p className="mx-auto mt-4 max-w-xl text-lg leading-relaxed text-muted-foreground">
           {post.excerpt}
         </p>
+        <AuthorByline />
       </div>
       <div className="mx-auto mt-10 max-w-5xl px-6">
         <div className="relative aspect-video overflow-hidden rounded-2xl">
@@ -593,6 +739,7 @@ function EducationHero({ post }: { post: BlogPost }) {
             src={post.heroImage}
             alt={post.heroAlt}
             fill
+            sizes="100vw"
             className="object-cover"
             priority
             placeholder="blur"
@@ -614,13 +761,14 @@ function SeasonalCareHero({ post }: { post: BlogPost }) {
       <div className="bg-primary pt-28 pb-32 md:pb-40">
         <div className="mx-auto max-w-3xl px-6">
           <BackLink light />
-          <CategoryBadge category={post.category} date={post.date} variant="light" />
+          <CategoryBadge category={post.category} date={formatDate(post.date)} variant="light" />
           <h1 className="mt-4 max-w-3xl font-serif text-3xl font-bold leading-tight text-primary-foreground md:text-5xl">
             {post.title}
           </h1>
           <p className="mt-4 max-w-xl text-lg leading-relaxed text-primary-foreground/80">
             {post.excerpt}
           </p>
+          <AuthorByline light />
         </div>
       </div>
       {/* Overlapping image */}
@@ -630,6 +778,7 @@ function SeasonalCareHero({ post }: { post: BlogPost }) {
             src={post.heroImage}
             alt={post.heroAlt}
             fill
+            sizes="100vw"
             className="object-cover"
             priority
             placeholder="blur"
@@ -639,6 +788,62 @@ function SeasonalCareHero({ post }: { post: BlogPost }) {
       </div>
       {/* Spacer so the body doesn't overlap */}
       <div className="h-8 md:h-12" />
+    </section>
+  )
+}
+
+/* ─── Related Posts ─── */
+
+function RelatedPosts({ currentSlug, relatedSlugs }: { currentSlug: string; relatedSlugs?: string[] }) {
+  const related = (relatedSlugs ?? [])
+    .filter((s) => s !== currentSlug)
+    .map((s) => posts.find((p) => p.slug === s))
+    .filter(Boolean) as BlogPost[]
+
+  if (related.length === 0) return null
+
+  return (
+    <section className="border-t border-border bg-secondary/30 py-16">
+      <div className="mx-auto max-w-4xl px-6">
+        <p className="mb-2 text-sm font-medium uppercase tracking-widest text-primary">
+          Pročitajte Još
+        </p>
+        <h2 className="font-serif text-2xl font-bold text-foreground md:text-3xl">
+          Povezani Članci
+        </h2>
+        <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {related.map((post) => (
+            <Link
+              key={post.slug}
+              href={`/blog/${post.slug}`}
+              className="group rounded-xl border border-border bg-card p-5 transition-shadow hover:shadow-md"
+            >
+              <div className="relative mb-4 aspect-video overflow-hidden rounded-lg">
+                <Image
+                  src={post.heroImage}
+                  alt={post.heroAlt}
+                  fill
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  className="object-cover transition-transform duration-300 group-hover:scale-105"
+                  style={post.heroObjectPosition ? { objectPosition: post.heroObjectPosition } : undefined}
+                  placeholder="blur"
+                  blurDataURL={BLUR_DATA_URL}
+                />
+              </div>
+              <span className="text-xs font-semibold uppercase tracking-wider text-primary">
+                {post.category}
+              </span>
+              <h3 className="mt-1 font-serif text-lg font-bold leading-snug text-foreground line-clamp-2">
+                {post.title}
+              </h3>
+              <span className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-primary">
+                Pročitaj
+                <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+              </span>
+            </Link>
+          ))}
+        </div>
+      </div>
     </section>
   )
 }
@@ -665,8 +870,14 @@ export default async function BlogPostPage({
 
   return (
     <>
+      <BreadcrumbJsonLd
+        items={[
+          { name: "Početna", href: "/" },
+          { name: "Blog", href: "/#blog" },
+          { name: post.title, href: `/blog/${post.slug}` },
+        ]}
+      />
       <BlogJsonLd post={post} />
-      {post.sections && <FAQJsonLd sections={post.sections} />}
       <SiteHeader />
       <main>
         <HeroComponent post={post} />
@@ -675,6 +886,7 @@ export default async function BlogPostPage({
         ) : (
           <ArticleBody post={post} />
         )}
+        <RelatedPosts currentSlug={post.slug} relatedSlugs={post.relatedSlugs} />
       </main>
       <SiteFooter />
     </>

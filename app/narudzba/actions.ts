@@ -44,5 +44,13 @@ export async function placeOrder(orderData: {
 
   if (itemsError) throw new Error(itemsError.message)
 
+  for (const item of orderData.items) {
+    const { error: stockError } = await supabase.rpc("decrement_stock", {
+      option_id: item.product_price_option,
+      amount: item.quantity,
+    })
+    if (stockError) throw new Error(stockError.message)
+  }
+
   return { orderId: order.id }
 }

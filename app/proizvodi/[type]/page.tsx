@@ -1,11 +1,13 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { BLUR_DATA_URL } from "@/lib/image-utils";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { ProductCard } from "@/components/product-card";
+import { BreadcrumbJsonLd } from "@/components/seo";
 import { Button } from "@/components/ui/button";
 import {
   ArrowLeft,
@@ -22,9 +24,11 @@ import {
   Mail,
   Truck,
   BadgeDollarSign,
+  CalendarClock,
   type LucideIcon,
 } from "lucide-react";
-import type { ProductWithOptions } from "@/lib/types/database";
+import { parsePrice, type ProductWithOptions } from "@/lib/types/database";
+import { BASE_URL } from "@/lib/constants";
 
 type CategoryMeta = {
   title: string;
@@ -91,6 +95,55 @@ const categoryMeta: Record<string, CategoryMeta> = {
   },
 };
 
+const maticeMeta = {
+  title: "Matice, Rojevi i Pčelinja Društva | Pčelinjak Ljubojević",
+  description:
+    "Kvalitetne selekcionirane pčelinje matice, rojevi i kompletna pčelinja društva. Cijene: matice 20 KM, rojevi 80 KM. Lično preuzimanje — Bijeljina, Donji Bordac 90.",
+  heroImage: "/images/pcelinjak/SlikaPcelinjakaUSumi.jpg",
+  heroAlt: "Pčelinjak u šumi — košnice u prirodnom okruženju",
+};
+
+export function generateStaticParams() {
+  return [{ type: "med" }, { type: "polen" }, { type: "matice" }];
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ type: string }>;
+}): Promise<Metadata> {
+  const { type } = await params;
+
+  if (type === "matice") {
+    return {
+      title: maticeMeta.title,
+      description: maticeMeta.description,
+      openGraph: {
+        title: "Matice, Rojevi i Pčelinja Društva",
+        description: maticeMeta.description,
+        type: "website",
+        images: [{ url: maticeMeta.heroImage, alt: maticeMeta.heroAlt }],
+      },
+      alternates: { canonical: "/proizvodi/matice" },
+    };
+  }
+
+  const meta = categoryMeta[type];
+  if (!meta) return {};
+
+  return {
+    title: `${meta.title} | Pčelinjak Ljubojević`,
+    description: meta.description,
+    openGraph: {
+      title: meta.title,
+      description: meta.description,
+      type: "website",
+      images: [{ url: meta.heroImage, alt: meta.heroAlt }],
+    },
+    alternates: { canonical: `/proizvodi/${type}` },
+  };
+}
+
 /* ───────────────────────────── Matice blog sections ───────────────────────────── */
 
 type BlogSection = {
@@ -98,6 +151,8 @@ type BlogSection = {
   icon: LucideIcon;
   label: string;
   title: string;
+  price: string;
+  priceNote?: string;
   description: string[];
   images: { src: string; alt: string }[];
   reversed?: boolean;
@@ -109,6 +164,7 @@ const maticeSections: BlogSection[] = [
     icon: Crown,
     label: "Matice",
     title: "Pčelinje Matice",
+    price: "20 KM",
     description: [
       "Naše matice su pažljivo selekcionirane iz najproduktivnijih i najmirnijih društava. Svaka matica prolazi kroz rigorozan proces odabira kako bi osigurali vrhunski genetski materijal za vaš pčelinjak.",
       "Odgajamo matice koje se odlikuju visokom nosivošću, mirnoćom na saću i otpornošću na bolesti. Posebnu pažnju posvećujemo prilagođenosti lokalnim klimatskim uslovima, što garantuje bolje rezultate u vašim košnicama.",
@@ -129,9 +185,10 @@ const maticeSections: BlogSection[] = [
     icon: TreePine,
     label: "Rojevi",
     title: "Rojevi",
+    price: "80 KM",
     description: [
-      "Nudimo kvalitetne rojeve za pčelare koji žele proširiti svoj pčelinjak ili započeti novo pčelarenje. Naši rojevi su formirani od jakih, zdravih društava sa mladim, oplođenim maticama.",
-      "Svaki roj se isporučuje u odgovarajućem transportnom pakovanju sa dovoljnom količinom hrane za bezbjedno putovanje. Pružamo savjete za uspješno useljavanje i prvu njegu nakon useljenja.",
+      "Nudimo kvalitetne rojeve pčela za pčelare koji žele proširiti ili obnoviti svoj pčelinjak. Naši rojevi formirani su od jakih i zdravih pčelinjih društava, sa mladim, oplođenim maticama, što obezbjeđuje stabilan razvoj i dobar prinos. Svaki roj sadrži 5 ramova — 3 rama sa leglom različitog uzrasta i 2 rama sa dovoljno hrane — što omogućava siguran prijem i brz napredak društva.",
+      "Preuzimanje rojeva vrši se lično na pčelinjaku uz prethodni dogovor. Kupac je dužan obezbijediti vlastitu košnicu ili transportnu opremu, a u slučaju kupovine kompletne opreme kod nas, roj ostaje u toj opremi i spreman je za dalji razvoj. Kupcima pružamo savjete za pravilno useljavanje roja i dalji razvoj pčelinjeg društva.",
     ],
     images: [
       {
@@ -149,10 +206,14 @@ const maticeSections: BlogSection[] = [
     id: "drustva",
     icon: Users,
     label: "Društva",
-    title: "Pčelinja Društva na Ramovima",
+    title: "Pčelinja društva na LR ramovima – prodaja u Bosni i Hercegovini",
+    price: "Po dogovoru",
+    priceNote: "Na 10 i 20 ramova",
     description: [
-      "Za pčelare koji traže gotova, razvijena društva, nudimo kompletna pčelinja društva na LR ili DB ramovima. Svako društvo dolazi sa mladom, maticom i minimalno 4-5 okvira legla i hranom.",
-      "Sva naša društva su redovno pregledana i garantovano zdrava. Prije prodaje, svako društvo prolazi kroz rigorozan pregled. Pružamo punu podršku pri preuzimanju i savjete za dalji razvoj društva.",
+      "Za pčelare koji žele kvalitetna i razvijena društva, nudimo kompletna pčelinja društva na LR ramovima, spremna za dalji razvoj i pouzdano pčelarenje. Naša društva su idealna za proširenje ili obnovu pčelinjaka.",
+      "Svako društvo dolazi sa mladom, oplođenom maticom, te minimalno 4–5 ramova legla i dovoljnom količinom hrane, što garantuje siguran početak i stabilan razvoj novog društva.",
+      "Sva naša pčelinja društva su redovno pregledana i zdravstveno sigurna. Prije prodaje prolaze detaljan pregled kako bi se osigurala maksimalna kvaliteta i zdravlje pčela.",
+      "Kupcima pružamo stručnu podršku pri preuzimanju, kao i savjete za pravilno useljavanje i dalji razvoj društva. Ako tražite pouzdanu prodaju pčelinjih društava u BiH, naši rojevi i razvijena društva su pravi izbor za vaš pčelinjak.",
     ],
     images: [
       {
@@ -176,10 +237,73 @@ export default async function ProductTypePage({
 }) {
   const { type } = await params;
 
+  const breadcrumbLabel: Record<string, string> = {
+    med: "Med i Proizvodi od Meda",
+    polen: "Polen, Matična Mliječ i Propolis",
+    matice: "Matice, Rojevi i Pčelinja Društva",
+  };
+
   // Matice gets a separate blog-like layout
   if (type === "matice") {
     return (
       <>
+        <BreadcrumbJsonLd
+          items={[
+            { name: "Početna", href: "/" },
+            { name: "Proizvodi", href: "/#products" },
+            { name: breadcrumbLabel[type] ?? type, href: `/proizvodi/${type}` },
+          ]}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "ItemList",
+              name: "Matice, Rojevi i Pčelinja Društva",
+              itemListElement: [
+                {
+                  "@type": "ListItem",
+                  position: 1,
+                  item: {
+                    "@type": "Product",
+                    name: "Pčelinja Matica — selekcionirana",
+                    description:
+                      "Pažljivo selekcionirane matice iz najproduktivnijih i najmirnijih društava, prilagođene lokalnim klimatskim uslovima.",
+                    image: `${BASE_URL}/images/pcelinjak/SlikaMaticeSaLeglom.jpg`,
+                    brand: { "@type": "Brand", name: "Pčelinjak Ljubojević" },
+                    itemCondition: "https://schema.org/NewCondition",
+                    offers: {
+                      "@type": "Offer",
+                      price: "20",
+                      priceCurrency: "BAM",
+                      availability: "https://schema.org/InStock",
+                    },
+                  },
+                },
+                {
+                  "@type": "ListItem",
+                  position: 2,
+                  item: {
+                    "@type": "Product",
+                    name: "Pčelinji Roj — 5 ramova",
+                    description:
+                      "Kvalitetni rojevi formirani od jakih i zdravih društava sa mladim, oplođenim maticama.",
+                    image: `${BASE_URL}/images/pcelinjak/SlikaPceleNaLetu.jpg`,
+                    brand: { "@type": "Brand", name: "Pčelinjak Ljubojević" },
+                    itemCondition: "https://schema.org/NewCondition",
+                    offers: {
+                      "@type": "Offer",
+                      price: "80",
+                      priceCurrency: "BAM",
+                      availability: "https://schema.org/InStock",
+                    },
+                  },
+                },
+              ],
+            }),
+          }}
+        />
         <SiteHeader />
         <main>
           {/* Hero */}
@@ -188,6 +312,7 @@ export default async function ProductTypePage({
               src="/images/pcelinjak/SlikaPcelinjakaUSumi.jpg"
               alt="Pčelinjak u šumi — košnice u prirodnom okruženju"
               fill
+              sizes="100vw"
               className="object-cover"
               priority
               placeholder="blur"
@@ -265,6 +390,21 @@ export default async function ProductTypePage({
                         {paragraph}
                       </p>
                     ))}
+
+                    {/* Price tag */}
+                    <div className="mt-6 inline-flex items-center gap-3 rounded-xl border border-accent/30 bg-accent/10 px-5 py-3">
+                      <BadgeDollarSign className="h-5 w-5 text-accent" />
+                      <div>
+                        <p className="font-serif text-xl font-bold text-foreground">
+                          {section.price}
+                        </p>
+                        {section.priceNote && (
+                          <p className="text-xs text-muted-foreground">
+                            {section.priceNote}
+                          </p>
+                        )}
+                      </div>
+                    </div>
                   </div>
 
                   {/* Images */}
@@ -284,6 +424,7 @@ export default async function ProductTypePage({
                           src={img.src}
                           alt={img.alt}
                           fill
+                          sizes="(max-width: 768px) 50vw, 25vw"
                           className="object-cover"
                           placeholder="blur"
                           blurDataURL={BLUR_DATA_URL}
@@ -368,6 +509,29 @@ export default async function ProductTypePage({
             </div>
           </section>
 
+          {/* Related blog post */}
+          <section className="border-t border-border bg-secondary/40 py-14">
+            <div className="mx-auto max-w-7xl px-6">
+              <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <p className="text-sm font-medium uppercase tracking-widest text-primary">
+                    Iz našeg bloga
+                  </p>
+                  <p className="mt-1 font-serif text-xl font-bold text-foreground md:text-2xl">
+                    Proljetni Pregled Košnica: Šta Provjeriti u Pčelinjaku
+                  </p>
+                </div>
+                <Link
+                  href="/blog/spring-hive-inspections"
+                  className="inline-flex shrink-0 items-center gap-2 rounded-lg border border-primary px-5 py-2.5 text-sm font-semibold text-primary transition-colors hover:bg-primary hover:text-primary-foreground"
+                >
+                  Pročitajte članak
+                  <ArrowLeft className="h-4 w-4 rotate-180" />
+                </Link>
+              </div>
+            </div>
+          </section>
+
           {/* Contact CTA */}
           <section className="bg-primary py-20">
             <div className="mx-auto max-w-7xl px-6">
@@ -390,7 +554,7 @@ export default async function ProductTypePage({
                       Telefon
                     </p>
                     <p className="mt-1 font-serif text-xl font-bold text-primary-foreground">
-                      +387 65 123 456
+                      +381 66 861 439
                     </p>
                   </div>
                   <div className="rounded-lg bg-primary-foreground/10 p-6">
@@ -399,7 +563,7 @@ export default async function ProductTypePage({
                       E-mail
                     </p>
                     <p className="mt-1 font-serif text-xl font-bold text-primary-foreground">
-                      info@pcelinjak.ba
+                      milos.ljubojevic36@gmail.com
                     </p>
                   </div>
                 </div>
@@ -428,8 +592,63 @@ export default async function ProductTypePage({
 
   const typedProducts = (products as ProductWithOptions[]) ?? [];
 
+  const productListJsonLd = typedProducts.length > 0 ? {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: meta.title,
+    itemListElement: typedProducts.map((product, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      item: {
+        "@type": "Product",
+        name: product.product_name,
+        description: product.desc || meta.description,
+        image: product.image
+          ? `${BASE_URL}${product.image}`
+          : undefined,
+        brand: {
+          "@type": "Brand",
+          name: "Pčelinjak Ljubojević",
+        },
+        itemCondition: "https://schema.org/NewCondition",
+        offers: (() => {
+          const opts = product.Product_price_options ?? [];
+          if (opts.length === 0) return undefined;
+          const prices = opts.map((opt) => parsePrice(opt.price));
+          return {
+            "@type": "AggregateOffer",
+            lowPrice: String(Math.min(...prices)),
+            highPrice: String(Math.max(...prices)),
+            priceCurrency: "BAM",
+            offerCount: opts.length,
+            offers: opts.map((opt) => ({
+              "@type": "Offer",
+              price: String(parsePrice(opt.price)),
+              priceCurrency: "BAM",
+              availability: "https://schema.org/InStock",
+              name: opt.size,
+            })),
+          };
+        })(),
+      },
+    })),
+  } : null
+
   return (
     <>
+      <BreadcrumbJsonLd
+        items={[
+          { name: "Početna", href: "/" },
+          { name: "Proizvodi", href: "/#products" },
+          { name: breadcrumbLabel[type] ?? type, href: `/proizvodi/${type}` },
+        ]}
+      />
+      {productListJsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(productListJsonLd) }}
+        />
+      )}
       <SiteHeader />
       <main>
         {/* Hero */}
@@ -438,6 +657,7 @@ export default async function ProductTypePage({
             src={meta.heroImage}
             alt={meta.heroAlt}
             fill
+            sizes="100vw"
             className="object-cover"
             priority
             placeholder="blur"
@@ -501,8 +721,13 @@ export default async function ProductTypePage({
               </h2>
             </div>
 
+            <div className="mx-auto mt-8 flex max-w-md items-center justify-center gap-2.5 rounded-full border border-accent/30 bg-accent/10 px-5 py-2.5 text-sm text-foreground">
+              <CalendarClock className="h-4 w-4 shrink-0 text-accent" />
+              <span>Narudžbe šaljemo svake srijede.</span>
+            </div>
+
             {typedProducts.length > 0 ? (
-              <div className="mt-14 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
                 {typedProducts.map((product) => (
                   <ProductCard key={product.id} product={product} />
                 ))}
@@ -514,6 +739,37 @@ export default async function ProductTypePage({
             )}
           </div>
         </section>
+
+        {/* Related blog post */}
+        {(type === "med" || type === "polen") && (() => {
+          const blogLink =
+            type === "med"
+              ? { href: "/blog/art-of-extracting-raw-honey", label: "Vrcanje Sirovog Meda: Od Košnice do Tegle" }
+              : { href: "/blog/vodic-za-pcelarstvo", label: "Vodič za Pčelarstvo — Oprema, Sezona i Zdravlje Pčela" }
+          return (
+            <section className="border-t border-border bg-secondary/40 py-14">
+              <div className="mx-auto max-w-7xl px-6">
+                <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
+                  <div>
+                    <p className="text-sm font-medium uppercase tracking-widest text-primary">
+                      Iz našeg bloga
+                    </p>
+                    <p className="mt-1 font-serif text-xl font-bold text-foreground md:text-2xl">
+                      {blogLink.label}
+                    </p>
+                  </div>
+                  <Link
+                    href={blogLink.href}
+                    className="inline-flex shrink-0 items-center gap-2 rounded-lg border border-primary px-5 py-2.5 text-sm font-semibold text-primary transition-colors hover:bg-primary hover:text-primary-foreground"
+                  >
+                    Pročitajte članak
+                    <ArrowLeft className="h-4 w-4 rotate-180" />
+                  </Link>
+                </div>
+              </div>
+            </section>
+          )
+        })()}
 
         {/* CTA */}
         <section className="bg-secondary py-20">
@@ -536,7 +792,7 @@ export default async function ProductTypePage({
                     Telefon
                   </p>
                   <p className="mt-2 font-serif text-xl font-bold text-foreground">
-                    +387 65 123 456
+                    +381 66 861 439
                   </p>
                 </div>
                 <div className="rounded-lg border border-border bg-card p-6">
@@ -544,7 +800,7 @@ export default async function ProductTypePage({
                     E-mail
                   </p>
                   <p className="mt-2 font-serif text-xl font-bold text-foreground">
-                    info@pcelinjak.ba
+                    milos.ljubojevic36@gmail.com
                   </p>
                 </div>
               </div>

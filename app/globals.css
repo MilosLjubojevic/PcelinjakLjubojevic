@@ -23,7 +23,7 @@ html {
   --accent: oklch(0.75 0.14 75);
   --accent-foreground: oklch(0.22 0.02 50);
   --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.98 0.005 80);
   --border: oklch(0.88 0.02 80);
   --input: oklch(0.88 0.02 80);
   --ring: oklch(0.40 0.10 145);

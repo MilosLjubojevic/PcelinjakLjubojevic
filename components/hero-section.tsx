@@ -1,14 +1,19 @@
 import Image from "next/image";
+import { MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { BLUR_DATA_URL } from "@/lib/image-utils";
+
+const MAPS_URL =
+  "https://www.google.com/maps/place/Pcelinjak+Ljubojevic/data=!4m2!3m1!1s0x0:0x675e009c76f6e038?sa=X&ved=1t:2428&ictx=111";
 
 export function HeroSection() {
   return (
     <section className="relative min-h-[90vh] flex items-end overflow-hidden">
       <Image
-        src="/images/HeaderBeeyard.png"
+        src="/images/HeaderBeeyard.jpg"
         alt="Pčelinjak Ljubojević — košnice na livadi okružene prirodom"
         fill
+        sizes="100vw"
         className="object-cover"
         priority
         placeholder="blur"
@@ -25,11 +30,20 @@ export function HeroSection() {
           <span className="text-accent">Pravo iz Naših Košnica</span>
         </h1>
         <p className="mt-6 max-w-xl text-lg leading-relaxed text-primary-foreground/80">
-          Prirodni livadski med, polen, propolis i matična mliječ sa porodičnog
-          pčelinjaka. Preko 200 pčelinjih društava njegujemo s ljubavlju —
-          svaka tegla nosi kvalitet provjerene tradicije.
+          Prirodni med, polen, propolis i matična mliječ sa porodičnog
+          pčelinjaka. Preko 200 pčelinjih društava njegujemo s ljubavlju — svaka
+          tegla nosi kvalitet provjerene tradicije.
         </p>
-        <div className="mt-8 flex flex-wrap gap-4">
+        <a
+          href={MAPS_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-4 inline-flex items-center gap-1.5 text-sm text-primary-foreground/70 transition-colors hover:text-accent"
+        >
+          <MapPin className="h-4 w-4" />
+          Bijeljina, Donji Bordac 90
+        </a>
+        <div className="mt-4 flex flex-wrap gap-4">
           <Button
             size="lg"
             className="bg-primary text-primary-foreground hover:bg-primary/90"
