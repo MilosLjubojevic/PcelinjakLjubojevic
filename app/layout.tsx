@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next'
 import { DM_Sans, Playfair_Display } from 'next/font/google'
+import Script from 'next/script'
 import { CartProvider } from '@/lib/cart-context'
 import { BASE_URL } from '@/lib/constants'
 import { Toaster } from '@/components/ui/sonner'
@@ -57,6 +58,15 @@ export default function RootLayout({
   return (
     <html lang="sr-Latn" className={`${dmSans.variable} ${playfair.variable}`} suppressHydrationWarning>
       <body className="font-sans antialiased" suppressHydrationWarning>
+        <Script src="https://www.googletagmanager.com/gtag/js?id=G-78VRSJ9TF9" strategy="afterInteractive" />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-78VRSJ9TF9');
+          `}
+        </Script>
         <CartProvider>
           {children}
         </CartProvider>
