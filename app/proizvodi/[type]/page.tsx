@@ -554,7 +554,7 @@ export default async function ProductTypePage({
                       Telefon
                     </p>
                     <p className="mt-1 font-serif text-xl font-bold text-primary-foreground">
-                      +381 66 861 439
+                      +387 66 861 439
                     </p>
                   </div>
                   <div className="rounded-lg bg-primary-foreground/10 p-6">
@@ -792,7 +792,7 @@ export default async function ProductTypePage({
                     Telefon
                   </p>
                   <p className="mt-2 font-serif text-xl font-bold text-foreground">
-                    +381 66 861 439
+                    +387 66 861 439
                   </p>
                 </div>
                 <div className="rounded-lg border border-border bg-card p-6">

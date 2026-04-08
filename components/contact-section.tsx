@@ -138,7 +138,7 @@ export function ContactSection() {
             <ContactInfo
               icon={<Phone className="h-5 w-5" />}
               title="Pozovite Nas"
-              lines={["+381 66 861 439", "+381 65 994 971"]}
+              lines={["+387 66 861 439", "+387 65 994 971"]}
             />
             <ContactInfo
               icon={<Mail className="h-5 w-5" />}
