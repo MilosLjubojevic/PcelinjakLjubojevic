@@ -1,6 +1,10 @@
 "use client"
 
-import { useState } from "react"
+declare global {
+  interface Window { gtag: (...args: unknown[]) => void }
+}
+
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { useCart, SHIPPING_COST } from "@/lib/cart-context"
@@ -42,6 +46,21 @@ export default function CheckoutPage() {
     resolver: zodResolver(checkoutSchema),
   })
 
+  useEffect(() => {
+    if (items.length === 0) return
+    if (typeof window.gtag !== "function") return
+    window.gtag("event", "begin_checkout", {
+      currency: "BAM",
+      value: totalPrice + SHIPPING_COST,
+      items: items.map((item) => ({
+        item_id: String(item.product.id),
+        item_name: item.product.product_name,
+        price: parsePrice(item.priceOption.price),
+        quantity: item.quantity,
+      })),
+    })
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
   const onSubmit = async (data: CheckoutForm) => {
     if (items.length === 0) {
       toast.error("Korpa je prazna")
@@ -50,7 +69,7 @@ export default function CheckoutPage() {
 
     setSubmitting(true)
     try {
-      await placeOrder({
+      const { orderId } = await placeOrder({
         ...data,
         items: items.map((item) => ({
           product_id: item.product.id,
@@ -58,6 +77,20 @@ export default function CheckoutPage() {
           quantity: item.quantity,
         })),
       })
+      if (typeof window.gtag === "function") {
+        window.gtag("event", "purchase", {
+          transaction_id: String(orderId),
+          value: totalPrice + SHIPPING_COST,
+          currency: "BAM",
+          shipping: SHIPPING_COST,
+          items: items.map((item) => ({
+            item_id: String(item.product.id),
+            item_name: item.product.product_name,
+            price: parsePrice(item.priceOption.price),
+            quantity: item.quantity,
+          })),
+        })
+      }
       clearCart()
       router.push("/narudzba/uspjesno")
     } catch (err) {

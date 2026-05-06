@@ -58,13 +58,14 @@ export default function RootLayout({
   return (
     <html lang="sr-Latn" className={`${dmSans.variable} ${playfair.variable}`} suppressHydrationWarning>
       <body className="font-sans antialiased" suppressHydrationWarning>
-        <Script src="https://www.googletagmanager.com/gtag/js?id=G-78VRSJ9TF9" strategy="afterInteractive" />
+        <Script src="https://www.googletagmanager.com/gtag/js?id=AW-964-424-1033" strategy="afterInteractive" />
         <Script id="google-analytics" strategy="afterInteractive">
           {`
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
             gtag('config', 'G-78VRSJ9TF9');
+            gtag('config', 'AW-964-424-1033');
           `}
         </Script>
         <CartProvider>

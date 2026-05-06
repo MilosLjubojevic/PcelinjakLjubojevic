@@ -1,5 +1,9 @@
 "use client"
 
+declare global {
+  interface Window { gtag: (...args: unknown[]) => void }
+}
+
 import { useState, useCallback } from "react"
 import Image from "next/image"
 import { useCart } from "@/lib/cart-context"
@@ -34,6 +38,18 @@ export function ProductCard({ product }: { product: ProductWithOptions }) {
   const handleAdd = () => {
     if (!selectedOption) return
     addItem(product, selectedOption, quantity)
+    if (typeof window.gtag === "function") {
+      window.gtag("event", "add_to_cart", {
+        currency: "BAM",
+        value: parseFloat(selectedOption.price) || 0,
+        items: [{
+          item_id: String(product.id),
+          item_name: product.product_name,
+          price: parseFloat(selectedOption.price) || 0,
+          quantity,
+        }],
+      })
+    }
     toast.success(`${product.product_name} dodan u korpu`)
     setQuantity(1)
   }
