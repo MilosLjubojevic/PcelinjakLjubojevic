@@ -29,7 +29,7 @@ const nextConfig = {
           {
             key: "Content-Security-Policy",
             value:
-              "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' https: data:; connect-src 'self' https://wgxvdcukjrrxdcjechxv.supabase.co https://www.google-analytics.com https://analytics.google.com; font-src 'self' https://fonts.gstatic.com; frame-ancestors 'none';",
+              "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://googleads.g.doubleclick.net https://www.googleadservices.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' https: data:; connect-src 'self' https://wgxvdcukjrrxdcjechxv.supabase.co https://www.google-analytics.com https://analytics.google.com https://googleads.g.doubleclick.net https://www.googleadservices.com https://stats.g.doubleclick.net; font-src 'self' https://fonts.gstatic.com; frame-src https://bid.g.doubleclick.net; frame-ancestors 'none';",
           },
         ],
       },
