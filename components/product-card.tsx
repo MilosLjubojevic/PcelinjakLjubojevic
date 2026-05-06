@@ -39,13 +39,14 @@ export function ProductCard({ product }: { product: ProductWithOptions }) {
     if (!selectedOption) return
     addItem(product, selectedOption, quantity)
     if (typeof window.gtag === "function") {
+      const unitPrice = parseFloat(selectedOption.price) || 0
       window.gtag("event", "add_to_cart", {
         currency: "BAM",
-        value: parseFloat(selectedOption.price) || 0,
+        value: unitPrice * quantity,
         items: [{
           item_id: String(product.id),
           item_name: product.product_name,
-          price: parseFloat(selectedOption.price) || 0,
+          price: unitPrice,
           quantity,
         }],
       })
