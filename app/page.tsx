@@ -23,7 +23,7 @@ function LocalBusinessJsonLd() {
         email: "milos.ljubojevic36@gmail.com",
         address: {
           "@type": "PostalAddress",
-          streetAddress: "Donji Bordac 90",
+          streetAddress: "Donji Brodac 90",
           addressLocality: "Bijeljina",
           postalCode: "76300",
           addressCountry: "BA",

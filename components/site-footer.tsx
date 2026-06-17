@@ -53,7 +53,7 @@ export function SiteFooter() {
               className="mt-3 inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-primary"
             >
               <MapPin className="h-4 w-4" />
-              Bijeljina, Donji Bordac 90
+              Bijeljina, Donji Brodac 90
             </a>
           </div>
 

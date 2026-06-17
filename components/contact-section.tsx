@@ -131,7 +131,7 @@ export function ContactSection() {
               <ContactInfo
                 icon={<MapPin className="h-5 w-5" />}
                 title="Posjetite Nas"
-                lines={["Bijeljina, Donji Bordac 90"]}
+                lines={["Bijeljina, Donji Brodac 90"]}
                 clickable
               />
             </a>

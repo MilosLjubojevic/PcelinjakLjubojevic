@@ -41,7 +41,7 @@ export function HeroSection() {
           className="mt-4 inline-flex items-center gap-1.5 text-sm text-primary-foreground/70 transition-colors hover:text-accent"
         >
           <MapPin className="h-4 w-4" />
-          Bijeljina, Donji Bordac 90
+          Bijeljina, Donji Brodac 90
         </a>
         <div className="mt-4 flex flex-wrap gap-4">
           <Button

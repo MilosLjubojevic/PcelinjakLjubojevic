@@ -33,7 +33,7 @@ export default function PolitikaPrivatnostiPage() {
                 1. Ko prikuplja podatke
               </h2>
               <p>
-                Pčelinjak Ljubojević, vlasnik Miloš Ljubojević, Donji Bordac 90,
+                Pčelinjak Ljubojević, vlasnik Miloš Ljubojević, Donji Brodac 90,
                 76300 Bijeljina, Bosna i Hercegovina (u daljem tekstu: „mi" ili
                 „pčelinjak") odgovoran je za obradu vaših ličnih podataka
                 prikupljenih putem ove web stranice.
@@ -127,7 +127,7 @@ export default function PolitikaPrivatnostiPage() {
               </p>
               <address className="mt-3 not-italic space-y-1 text-muted-foreground">
                 <p>Pčelinjak Ljubojević — Miloš Ljubojević</p>
-                <p>Donji Bordac 90, 76300 Bijeljina, BiH</p>
+                <p>Donji Brodac 90, 76300 Bijeljina, BiH</p>
                 <p>Tel: <a href="tel:+38766861439" className="text-primary hover:underline">+387 66 861 439</a></p>
                 <p>Email: <a href="mailto:milos.ljubojevic36@gmail.com" className="text-primary hover:underline">milos.ljubojevic36@gmail.com</a></p>
               </address>

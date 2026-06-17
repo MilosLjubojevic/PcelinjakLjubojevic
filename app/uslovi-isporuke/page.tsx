@@ -73,7 +73,7 @@ export default function UsloviIsporukePage() {
                 dogovor:
               </p>
               <address className="not-italic space-y-1 text-muted-foreground">
-                <p>Donji Bordac 90, 76300 Bijeljina</p>
+                <p>Donji Brodac 90, 76300 Bijeljina</p>
                 <p>
                   Tel:{" "}
                   <a href="tel:+38766861439" className="text-primary hover:underline">

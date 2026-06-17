@@ -98,7 +98,7 @@ const categoryMeta: Record<string, CategoryMeta> = {
 const maticeMeta = {
   title: "Matice, Rojevi i Pčelinja Društva | Pčelinjak Ljubojević",
   description:
-    "Kvalitetne selekcionirane pčelinje matice, rojevi i kompletna pčelinja društva. Cijene: matice 20 KM, rojevi 80 KM. Lično preuzimanje — Bijeljina, Donji Bordac 90.",
+    "Kvalitetne selekcionirane pčelinje matice, rojevi i kompletna pčelinja društva. Cijene: matice 20 KM, rojevi 80 KM. Lično preuzimanje — Bijeljina, Donji Brodac 90.",
   heroImage: "/images/pcelinjak/SlikaPcelinjakaUSumi.jpg",
   heroAlt: "Pčelinjak u šumi — košnice u prirodnom okruženju",
 };
